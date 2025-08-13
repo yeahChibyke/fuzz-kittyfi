@@ -28,7 +28,7 @@ contract FuzzKittyFi {
     constructor() {
         helper = new HelperConfig();
         config = helper.getNetworkConfig();
-        weth = config.weth;
+        weth = address(new ERC20Mock());
         meowntainer = msg.sender;
 
         pool = new KittyPool(meowntainer, config.euroPriceFeed, config.aavePool);
@@ -46,5 +46,21 @@ contract FuzzKittyFi {
 
     function test_constructor_is_set_up_correctly() public view {
         assert(pool.getMeowntainer() == meowntainer);
+        assert(pool.getKittyCoin() == address(coin));
+        assert(pool.getTokenToVault(weth) == address(wethVault));
+        assert(pool.getAavePool() == config.aavePool);
+    }
+
+    function test_user_deposits_and_mints_kitty_coin(uint256 _amount, uint256 _amountToMint) public {
+        cheats.startPrank(msg.sender);
+
+        ERC20Mock(weth).mint(address(msg.sender), _amount);
+        IERC20(weth).approve(address(wethVault), _amount);
+        pool.depawsitMeowllateral(weth, _amount);
+        pool.meowintKittyCoin(_amountToMint);
+
+        cheats.stopPrank();
+
+        assert(pool.getKittyCoinMeownted(msg.sender) == _amountToMint);
     }
 }

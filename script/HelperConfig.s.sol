@@ -19,8 +19,7 @@ contract HelperConfig is Script {
     NetworkConfig private networkConfig;
 
     constructor() {
-            networkConfig = getSepoliaConfig();
-        
+        networkConfig = getSepoliaConfig();
     }
 
     function getSepoliaConfig() internal pure returns (NetworkConfig memory) {
